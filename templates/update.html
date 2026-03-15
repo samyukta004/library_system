@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add New Book</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Book Title</label>
+                        <input type="text" name="title" class="form-control" placeholder="e.g. Harry Potter" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Author Name</label>
+                        <input type="text" name="author" class="form-control" placeholder="e.g. J.K. Rowling" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="stock" class="form-control" min="1" value="1" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Save to Inventory</button>
+                        <a href="/" class="btn btn-light">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

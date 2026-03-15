@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Book Inventory</h2>
+    <a href="/add" class="btn btn-primary">Add Book</a>
+</div>
+
+{% if books %}
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Total Stock</th>
+                    <th>Available</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td><strong>{{ book.title }}</strong></td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.total_stock }}</td>
+                    <td>
+                        {% if book.available_stock > 0 %}
+                            <span class="badge bg-success">{{ book.available_stock }} In Stock</span>
+                        {% else %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/borrow/{{ book.id }}" class="btn btn-sm btn-outline-primary {% if book.available_stock == 0 %}disabled{% endif %}">Borrow</a>
+                        <a href="/return/{{ book.id }}" class="btn btn-sm btn-outline-secondary">Return</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center mt-5">
+    <h4 class="text-muted">No books in inventory.</h4>
+    <p>Click "Add Book" to start your collection.</p>
+</div>
+{% endif %}
+{% endblock %}

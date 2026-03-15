@@ -1,0 +1,19 @@
+# Environments
+venv/
+env/
+.env
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+library.db
+instance/
+
+# Kaggle data
+.cache/
+
+# OS files
+.DS_Store

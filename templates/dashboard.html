@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">📊 Library Insights & Dashboard</h2>
+    
+    <div class="row mb-4">
+        <!-- Total Titles -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Unique Titles</h5>
+                    <p class="card-text display-4">{{ total_titles }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Books Owned -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Books Owned</h5>
+                    <p class="card-text display-4">{{ total_books_owned }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Books Borrowed -->
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Books Currently Borrowed</h5>
+                    <p class="card-text display-4">{{ books_borrowed }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Warnings -->
+    <div class="card border-warning mb-4">
+        <div class="card-header bg-warning text-dark font-weight-bold">
+            ⚠️ Low Stock Warnings (2 or fewer available)
+        </div>
+        <div class="card-body p-0">
+            {% if low_stock_books %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Available / Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in low_stock_books %}
+                        <tr>
+                            <td>{{ book.id }}</td>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.author }}</td>
+                            <td class="text-danger font-weight-bold">{{ book.available_stock }} / {{ book.total_stock }}</td>
+                            <td>
+                                <form action="{{ url_for('dashboard_add_stock', id=book.id) }}" method="POST" class="d-flex align-items-center">
+                                    <input type="number" name="quantity" class="form-control form-control-sm me-2" style="width: 80px;" min="1" value="1" required>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Add Stock</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center text-muted">
+                <p>No books are currently low on stock.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Demand Prediction -->
+    <div class="card border-info mb-4">
+        <div class="card-header bg-info text-white font-weight-bold">
+            🔥 Predicted High Demand (Next 7 Days)
+        </div>
+        <div class="card-body p-0">
+            {% if trending_query %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Available / Total</th>
+                            <th>Recent Borrows (30d)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book, count in trending_query %}
+                        <tr>
+                            <td>{{ book.id }}</td>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.author }}</td>
+                            <td>
+                                {% if book.available_stock <= 2 %}
+                                <span class="text-danger font-weight-bold">{{ book.available_stock }} / {{ book.total_stock }}</span>
+                                {% else %}
+                                <span class="text-success">{{ book.available_stock }} / {{ book.total_stock }}</span>
+                                {% endif %}
+                            </td>
+                            <td><span class="badge bg-secondary rounded-pill fs-6">{{ count }} times</span></td>
+                            <td>
+                                <form action="{{ url_for('dashboard_add_stock', id=book.id) }}" method="POST" class="d-flex align-items-center">
+                                    <input type="number" name="quantity" class="form-control form-control-sm me-2" style="width: 80px;" min="1" value="1" required>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Add Stock</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center text-muted">
+                <p>Not enough historical data to make a prediction.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
