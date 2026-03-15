@@ -55,8 +55,12 @@ class Transaction(db.Model):
     user = db.relationship('User', backref=db.backref('transactions', lazy=True))
 
 # Ensure tables are created on startup (solves missing relation errors on Vercel)
-with app.app_context():
-    db.create_all()
+@app.before_request
+def setup_tables():
+    # Attempt to create tables only once per worker
+    if not hasattr(app, 'setup_tables_run'):
+        db.create_all()
+        app.setup_tables_run = True
 
 @login_manager.user_loader
 def load_user(user_id):
