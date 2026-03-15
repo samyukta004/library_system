@@ -10,8 +10,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-123'
 
 # Read database URI from environment variable (useful for PostgreSQL on Vercel)
-# Fallback to local SQLite if not provided.
-db_url = os.environ.get('DATABASE_URL', 'sqlite:///library.db')
+# Fallback to local SQLite if not provided. On Vercel, the file system is read-only except for /tmp.
+if os.environ.get('VERCEL'):
+    fallback_url = 'sqlite:////tmp/library.db'
+else:
+    fallback_url = 'sqlite:///library.db'
+    
+db_url = os.environ.get('DATABASE_URL', fallback_url)
 # Fix for some older postgres URL formats
 if db_url.startswith('postgres://'):
     db_url = db_url.replace('postgres://', 'postgresql://', 1)
