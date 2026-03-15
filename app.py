@@ -8,7 +8,15 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db'
+
+# Read database URI from environment variable (useful for PostgreSQL on Vercel)
+# Fallback to local SQLite if not provided.
+db_url = os.environ.get('DATABASE_URL', 'sqlite:///library.db')
+# Fix for some older postgres URL formats
+if db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
