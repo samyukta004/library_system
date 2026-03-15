@@ -49,6 +49,10 @@ class Transaction(db.Model):
     book = db.relationship('Book', backref=db.backref('transactions', lazy=True))
     user = db.relationship('User', backref=db.backref('transactions', lazy=True))
 
+# Ensure tables are created on startup (solves missing relation errors on Vercel)
+with app.app_context():
+    db.create_all()
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -216,6 +220,4 @@ def dashboard(): # 5. View Insights
                            trending_query=trending_query)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, port=5001)

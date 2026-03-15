@@ -31,6 +31,9 @@ def populate_database():
 
     # 3. Push data into the Flask database
     with app.app_context():
+        # Ensure tables exist
+        db.create_all()
+        
         # Delete all old books before importing
         print("-> Deleting old books from the database...")
         db.session.query(Book).delete()
